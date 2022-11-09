@@ -10,13 +10,10 @@ print(platform.architecture())
 img = cv2.imread('./logo.png', 1)
 img_height, img_width, _= img.shape
 
-minlim, maxlim = tuple([30]*3), tuple([255]*3)
-mask = cv2.inRange(img, minlim, maxlim)
-mask = cv2.merge((mask, mask, mask))
-mask //= 255
-
-cv2.imshow("image",img)
-#  cv2.moveWindow("image",200,200)
+mask = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+_, mask = cv2.threshold(mask, 190, 255, cv2.THRESH_BINARY)
+mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
+cv2.imshow("mask", mask)
 
 cap=cv2.VideoCapture(0)
 if not cap.isOpened():
@@ -25,8 +22,8 @@ if not cap.isOpened():
 
 while(True):
     ret,frame=cap.read()
-    frame[0:img_height, 0:img_width] *= mask
-    frame[0:img_height, 0:img_width] += img*(1-mask)
+    frame[0:img_height, 0:img_width] &= mask
+    frame[0:img_height, 0:img_width] |= img&(~mask)
     cv2.imshow("camera", frame)
     if cv2.waitKey(1) == ord('q'):
         break
