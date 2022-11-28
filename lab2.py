@@ -52,7 +52,7 @@ def floodFill(image, showImage):
                 image |= cv.merge((B(fill), G(fill), R(fill)))
                 showImage()
 
-                handler.picked_color = False
+                handler.pick_color = False
 
     showImage()
     return handler
